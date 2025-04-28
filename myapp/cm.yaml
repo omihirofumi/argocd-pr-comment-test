@@ -28,8 +28,7 @@ data:
       revisionPath: "{{.app.status.operationState.syncResult.revision}}"
       pullRequestComment:
         content: |
-          Application {{.app.metadata.name}} is now running new version of deployments manifests.
-          See more here: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true
+          @omihirofumi hello
   template.app-health-degraded: |
     email:
       subject: Application {{.app.metadata.name}} has degraded.

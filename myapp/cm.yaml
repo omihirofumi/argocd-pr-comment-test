@@ -30,6 +30,7 @@ data:
         content: |
           @omihirofumi hello
           Application {{.app.metadata.name}} is now running new version of deployments manifests.
+          revisionPath: "{{.app.status.operationState.syncResult.revision}}"
       checkRun:
         name: "continuous-delivery/{{.app.metadata.name}}"
         details_url: "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true"

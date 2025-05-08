@@ -29,6 +29,7 @@ data:
       pullRequestComment:
         content: |
           @omihirofumi hello
+          Application {{.app.metadata.name}} is now running new version of deployments manifests.
   template.app-health-degraded: |
     email:
       subject: Application {{.app.metadata.name}} has degraded.

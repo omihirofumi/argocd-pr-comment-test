@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: guestbook-ui
   annotations:
-    github.com/pr-number: 1234
+    - github.com/pr-number: 1234
 spec:
   replicas: 2
   revisionHistoryLimit: 3

@@ -52,8 +52,15 @@ data:
       <@U08GQ8Z3WH5>
   template.my-custom-template-slack-template: |
     message: |
-      Application {{.app.metadata.name}} sync is {{.app.status.sync.status}}.
-      Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
+      {{ $commitMessage := (call .repo.GetCommitMetadata .app.status.sync.revision).Message }} {{ $prText := regexFind "PR-[0-9]+" $commitMessage }}
+      {{ $prText := regexFind "PR-[0-9]+" $commitMessage }}
+      {{ $prNumber := "" }}
+      {{ if $prText }}
+        {{ $prNumber = trimPrefix "PR-" $prText }}
+        <https://github.com/omihirofumi/xxxxxx/pull/{{ $prNumber }}|PR-{{ $prNumber }}>がDev環境に反映されました。
+      {{ end }}
+      対象:apps/{{.app.metadata.name}}
+
   trigger.on-created: |
     - description: Application is created.
       oncePer: app.metadata.name

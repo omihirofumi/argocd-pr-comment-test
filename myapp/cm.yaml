@@ -50,7 +50,10 @@ data:
   template.app-sync-succeeded: |
     message: |
       <@U08GQ8Z3WH5>
-
+  template.my-custom-template-slack-template: |
+    message: |
+      Application {{.app.metadata.name}} sync is {{.app.status.sync.status}}.
+      Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
   trigger.on-created: |
     - description: Application is created.
       oncePer: app.metadata.name
@@ -100,5 +103,6 @@ data:
     - description: Application syncing has succeeded and health
       send:
       - app-sync-succeeded
+      - my-custom-template-slack-template
       when: app.status.operationState.phase in ['Succeeded']  and app.status.health.status == 'Healthy'
       oncePer: app.status.sync.revision

@@ -48,8 +48,25 @@ data:
             Application {{.app.metadata.name}} is now running new version of deployments manifests.
             See more here: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}?operation=true
   template.app-sync-succeeded: |
-    message: |
-      <@U08GQ8Z3WH5>
+    slack:
+      attachments: |
+        [{
+          "title": "{{.app.metadata.name}}",
+          "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+          "color": "#ff0000",
+          "fields": [{
+            "title": "Sync Status",
+            "value": "{{.app.status.sync.status}}",
+            "short": true
+          }, {
+            "title": "Repository",
+            "value": "{{.app.spec.source.repoURL}}",
+            "short": true
+          }]
+        }]
+      # Aggregate the messages to the thread by git commit hash
+      groupingKey: "{{.app.status.sync.revision}}"
+      notifyBroadcast: true
   template.my-custom-template-slack-template: |
     message: |
       {{ $commitMessage := (call .repo.GetCommitMetadata .app.status.sync.revision).Message }} {{ $prText := regexFind "PR-[0-9]+" $commitMessage }}

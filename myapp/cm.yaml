@@ -136,8 +136,10 @@ data:
         app.status.operationState.phase in ['Succeeded'] and
         app.status.health.status == 'Healthy' and
         (
-          (call .repo.GetCommitMetadata .app.status.operationState.syncResult.revision).Message matches '.*change image tags of \\[[^\\]]*\\b' + app.metadata.name + '\\b[^\\]]*\\].*' or
-          (call .repo.GetCommitMetadata .app.status.operationState.syncResult.revision).Message matches '.*change image tags of \\[' + app.metadata.name + '\\].*'
+          (call .repo.GetCommitMetadata .app.status.sync.revision).Message matches ('.*\\[' + app.metadata.name + '\\].*') or
+          (call .repo.GetCommitMetadata .app.status.sync.revision).Message matches ('.*\\[' + app.metadata.name + ',.*') or
+          (call .repo.GetCommitMetadata .app.status.sync.revision).Message matches ('.*,\\s*' + app.metadata.name + '\\].*') or
+          (call .repo.GetCommitMetadata .app.status.sync.revision).Message matches ('.*,\\s*' + app.metadata.name + ',.*')
         )
       send:
       - my-custom-template-slack-template

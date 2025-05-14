@@ -69,14 +69,23 @@ data:
       notifyBroadcast: true
   template.my-custom-template-slack-template: |
     message: |
-      {{ $commitMessage := (call .repo.GetCommitMetadata .app.status.sync.revision).Message }} {{ $prText := regexFind "PR-[0-9]+" $commitMessage }}
-      {{ $prText := regexFind "PR-[0-9]+" $commitMessage }}
-      {{ $prNumber := "" }}
-      {{ if $prText }}
-        {{ $prNumber = trimPrefix "PR-" $prText }}
-        <https://github.com/omihirofumi/xxxxxx/pull/{{ $prNumber }}|PR-{{ $prNumber }}>がDev環境に反映されました。
-      {{ end }}
-      対象:apps/{{.app.metadata.name}}
+      {{- $commitMessage := (call .repo.GetCommitMetadata .app.status.sync.revision).Message }}
+      {{- $prText := regexFind "PR-[0-9]+" $commitMessage }}
+      {{- $appList := regexFind "\\[[^\\]]+\\]" $commitMessage }}
+      {{- $prNumber := "" }}
+      {{- if $prText }}
+        {{- $prNumber = trimPrefix "PR-" $prText }}
+      <https://github.com/babel-jp/champs-nextjs/pull/{{ $prNumber }}|PR-{{ $prNumber }}>
+      {{- else }}
+      コミット <https://github.com/babel-jp/champs-nextjs/commit/{{ .app.status.sync.revision }}|{{ .app.status.sync.revision | substr 0 7 }}>
+      {{- end }}
+      `apps/{{.app.metadata.name}}`がDev環境に反映されました。
+      {{- if $appList }}
+      変更されたapplication: {{ $appList }}
+      {{- end }}
+    slack:
+      groupingKey: "{{.app.status.sync.revision}}"
+      notifyBroadcast: true
 
   trigger.on-created: |
     - description: Application is created.

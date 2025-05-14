@@ -131,7 +131,12 @@ data:
       oncePer: app.status.sync.revision
   trigger.on-sync-succeeded2: |
     - description: Application syncing has succeeded and health
+      when: |
+        app.status.operationState.syncResult != nil and
+        app.status.operationState.phase in ['Succeeded'] and
+        app.status.health.status == 'Healthy' and
+        (app.status.operationState.syncResult.source.gitCommit.message matches '.*change image tags of \\[[^\\]]*\\b' + app.metadata.name + '\\b[^\\]]*\\].*' or
+         app.status.operationState.syncResult.source.gitCommit.message matches '.*change image tags of \\[' + app.metadata.name + '\\].*')
       send:
       - my-custom-template-slack-template
-      when: app.status.operationState.phase in ['Succeeded']  and app.status.health.status == 'Healthy'
       oncePer: app.status.sync.revision

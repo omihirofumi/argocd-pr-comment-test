@@ -139,17 +139,9 @@ data:
       when: app.status.operationState.phase in ['Succeeded']  and app.status.health.status == 'Healthy'
       oncePer: app.status.sync.revision
   trigger.on-sync-succeeded2: |
-    - description: Application syncing has succeeded and health
-      when: |
-        app.status.operationState.syncResult != nil and
-        app.status.operationState.phase in ['Succeeded'] and
-        app.status.health.status == 'Healthy' and
-        (
-          (call .repo.GetCommitMetadata .app.status.sync.revision).Message matches ('.*\\[' + app.metadata.name + '\\].*') or
-          (call .repo.GetCommitMetadata .app.status.sync.revision).Message matches ('.*\\[' + app.metadata.name + ',.*') or
-          (call .repo.GetCommitMetadata .app.status.sync.revision).Message matches ('.*,\\s*' + app.metadata.name + '\\].*') or
-          (call .repo.GetCommitMetadata .app.status.sync.revision).Message matches ('.*,\\s*' + app.metadata.name + ',.*')
-        )
+    - description: Application is synced and healthy. Triggered once per commit.
+      when: app.status.operationState.phase in ['Succeeded']  and app.status.health.status == 'Healthy'
+      oncePer: app.status.operationState.syncResult.revision
       send:
       - my-custom-template-slack-template
       oncePer: app.status.sync.revision
